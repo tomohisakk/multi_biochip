@@ -53,7 +53,7 @@ class Droplet:
 		
 		if next_state[0] < 0 or next_state[1] < 0 or next_state[0] > w-1 or next_state[1] > l-1:
 			return
-		elif m_usage[next_state[0]][next_state[1]] >= 1:
+		elif m_usage[next_state[1]][next_state[0]] >= 5:
 			return
 
 		self.x, self.y = next_state
@@ -115,6 +115,7 @@ class Routing:
 			dist_ = self.droplets[i].get_dist(self.goals[i])
 
 			if dist_ == 0:
+#				print("Reach the goal")
 				reward = 1.0
 			elif dist_ < self.dists[i]:
 				reward = 0.5
@@ -155,13 +156,13 @@ class MEDAEnv:
 		self.routing = Routing(w, l, n_agents)
 
 		self.n_steps = 0
-		self.n_max_steps = w+l
+		self.n_max_steps = 100
 		self.m_usage = np.zeros((w, l))
 
 
 	def step(self, actions):
 		self.n_steps += 1
-		
+
 		rewards = self.routing.move_droplets(actions, self.m_usage)
 		for key, r in zip(self.agents, rewards):
 			self.rewards[key] = r
@@ -172,7 +173,7 @@ class MEDAEnv:
 			is_dones = self.routing.is_done()
 			for key, s in zip(self.agents, is_dones):
 				self.dones[key] = s
-			self.add_usage()
+			#self.add_usage()
 		else:
 			for key in self.agents:
 				self.dones[key] = True
@@ -182,6 +183,7 @@ class MEDAEnv:
 	def reset(self, n_modules):
 		self.rewards = [0.]*self.n_agents
 		self.dones = [False]*self.n_agents
+#		self.m_usage = np.zeros((self.w, self.l))
 
 		self.n_steps = 0
 		self.routing.refresh()
@@ -190,18 +192,20 @@ class MEDAEnv:
 
 		return obs
 
+
 	def add_usage(self):
 		for i, agent in enumerate(self.agents):
 			if not self.dones[agent]:
 				droplet = self.routing.droplets[i]
-				self.m_usage[droplet.x][droplet.y] += 1
+				self.m_usage[droplet.y][droplet.x] += 1
+				print(self.m_usage)
 
 	def get_obs(self):
 		obs = [[]]*self.n_agents
 		for i, agent in enumerate(self.agents):
 			obs[i] = self.get_one_obs(i)
-#		obs[0] = np.reshape(obs[0], -1)
-#		obs[1] = np.reshape(obs[1], -1)
+		obs[0] = np.reshape(obs[0], -1)
+		obs[1] = np.reshape(obs[1], -1)
 
 		return obs
 
@@ -239,40 +243,46 @@ class MEDAEnv:
 
 """
 N_AGENTS = 2
+N_GAMES = 100
 
 env = MEDAEnv(w=10, l=10, n_agents=N_AGENTS)
-env.reset(n_modules=0)
-scores = 0
-dones = env.dones
-n_steps = 0
 
-while dones[0] == False:
-	n_steps += 1
-	a = [random.randint(0,3)]*N_AGENTS
-	print("--- Actions ---")
-	print(a)
+for i in range(N_GAMES):
+
+	scores = 0
+	n_steps = 0
+	env.reset(n_modules=0)
+	dones = [False]*N_AGENTS
+
+	while not any(dones):
+		n_steps += 1
+		a = [random.randint(0,3)]*N_AGENTS
+#		print("--- Actions ---")
+#		print(a)
+#		print()
+		obs_, rewards, dones, _ = env.step(a)
+		scores += sum(rewards)
+
+#		print("--- Observation ---")
+#		print(obs_)
+#		print()
+		
+
+#		print("--- Reward ---")
+#		print(rewards)
+#		print()
+
+#		print("--- Dones ---")
+#		print(dones)
+#		print()
+
+
+#	print("--- Game end ---")
+	print("Total score")
+	print(scores)
+
+	print("--- N_steps ---")
+	print(n_steps)
+	
 	print()
-	obs_, rewards, dones, _ = env.step(a)
-	scores += rewards[0]
-
-	print("--- Observation ---")
-	print(obs_)
-	print()
-
-	print("--- Reward ---")
-	print(rewards)
-	print()
-
-	print("--- Dones ---")
-	print(dones)
-	print()
-
-
-print("--- Game end ---")
-print("Total score")
-print()
-
-print("--- N_steps ---")
-print(n_steps)
-
 """

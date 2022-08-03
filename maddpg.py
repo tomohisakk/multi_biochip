@@ -54,8 +54,13 @@ class MADDPG:
 			# get the new state from the env
 			new_states = T.tensor(actor_new_states[agent_idx], dtype=T.float).to(device)
 
+#			print(new_states.shape) # [1024, 64]
+
 			# get new action according to the target actor
 			new_pi = agent.target_actor.forward(new_states)
+
+#			print(new_pi.shape) # [1024, 4]
+
 			all_agents_new_actions.append(new_pi)
 
 			# get the new state from the target actor
@@ -92,11 +97,17 @@ class MADDPG:
 			critic_value = agent.critic.forward(states, old_actions).flatten()
 			target = rewards[:,agent_idx] + agent.gamma*critic_value_
 
+#			print(target.shape) # 1
+#			print(critic_value.shape) # 1
+
 			# critic loss
 			critic_loss = F.mse_loss(target, critic_value)
 			agent.critic.optimizer.zero_grad()
 			critic_loss.backward(retain_graph=True)
 			agent.critic.optimizer.step()
+
+#			print(states.shape)
+#			print(mu.shape)
 
 			# actor loss
 			actor_loss = agent.critic.forward(states, mu).flatten()

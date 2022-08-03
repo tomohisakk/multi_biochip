@@ -71,6 +71,11 @@ class ActorNetwork(nn.Module):
 		x = F.relu(self.fc1(state))
 		x = F.relu(self.fc2(x))
 		pi = T.softmax(self.pi(x), dim=1)
+#		print(pi, sum(pi))
+#		print()
+#		pi = F.normalize(pi, p=1.0, dim=1)
+#		print(pi, sum(pi))
+
 
 		#print("--- pi ---")
 		#print(pi.shape) # 5

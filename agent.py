@@ -56,16 +56,18 @@ class Agent:
 
 	def choose_action(self, observation):
 		state = T.tensor([observation], dtype=T.float).to(self.actor.device)
-		actions = self.actor.forward(state)
-		noise = T.rand(self.n_actions).to(self.actor.device)
-		action = actions + noise
+		probs = self.actor.forward(state)
+#		noise = T.rand(self.n_actions).to(self.actor.device)
+#		probs += noise
+#		print(probs)
+#		print(action)
 
-		print("--- Action ---")
-		print(action) # 4
+#		print("--- Action ---")
+#		print(action) # 4
 
 		#print("--- action.detach().cpu().numpy()[0] ---")
 		#print(action.detach().cpu().numpy()[0])
-		return action.detach().cpu().numpy()[0]
+		return probs.detach().cpu().numpy()[0]
 
 
 	def save_models(self):
