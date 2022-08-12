@@ -56,6 +56,7 @@ class Agent:
 
 	def choose_action(self, observation):
 		state = T.tensor([observation], dtype=T.float).to(self.actor.device)
+	#	print(state)
 		probs = self.actor.forward(state)
 #		noise = T.rand(self.n_actions).to(self.actor.device)
 #		probs += noise

@@ -26,7 +26,10 @@ class MADDPG:
 		actions = []
 		for agent_idx, agent in enumerate(self.agents):
 			action = agent.choose_action(raw_obs[agent_idx])
+#			print("Action is")
+#			print(action)
 			actions.append(action)
+#		print(actions)
 		return actions
 
 	def learn(self, memory):

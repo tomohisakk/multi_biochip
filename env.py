@@ -156,7 +156,7 @@ class MEDAEnv:
 		self.routing = Routing(w, l, n_agents)
 
 		self.n_steps = 0
-		self.n_max_steps = 100
+		self.n_max_steps = 10
 		self.m_usage = np.zeros((w, l))
 
 
@@ -257,24 +257,24 @@ for i in range(N_GAMES):
 	while not any(dones):
 		n_steps += 1
 		a = [random.randint(0,3)]*N_AGENTS
-#		print("--- Actions ---")
-#		print(a)
-#		print()
+		print("--- Actions ---")
+		print(a)
+		print()
 		obs_, rewards, dones, _ = env.step(a)
 		scores += sum(rewards)
 
-#		print("--- Observation ---")
-#		print(obs_)
-#		print()
+		print("--- Observation ---")
+		print(obs_)
+		print()
 		
 
-#		print("--- Reward ---")
-#		print(rewards)
-#		print()
+		print("--- Reward ---")
+		print(rewards)
+		print()
 
-#		print("--- Dones ---")
-#		print(dones)
-#		print()
+		print("--- Dones ---")
+		print(dones)
+		print()
 
 
 #	print("--- Game end ---")
@@ -285,4 +285,5 @@ for i in range(N_GAMES):
 	print(n_steps)
 	
 	print()
+
 """

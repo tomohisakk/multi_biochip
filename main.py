@@ -29,12 +29,12 @@ if __name__ == '__main__':
 	scenario = 'scenario'
 
 	# action space is a list of arrays, assume each agent has same action space
-	n_actions = env.action_spaces
+	n_actions = 1
 	maddpg_agents = MADDPG(actor_dims, critic_dims, n_agents, n_actions, fc1=64, fc2=64, alpha=0.01, beta=0.01, scenario=scenario, chkpt_dir='tmp/maddpg/')
-	memory = MultiAgentReplayBuffer(1000000, critic_dims, actor_dims, n_actions, n_agents, batch_size=64)
+	memory = MultiAgentReplayBuffer(1000000, critic_dims, actor_dims, n_actions, n_agents, batch_size=1)
 
 	PRINT_INTERVAL = 100
-	N_GAMES = 1000000
+	N_GAMES = 50000
 	total_steps = 0
 	score_history = []
 	evaluate = False
@@ -53,21 +53,23 @@ if __name__ == '__main__':
 		while not any(done):
 			probs = maddpg_agents.choose_action(obs)
 
+			print(probs)
+
 #			action_probs = T.distributions.Categorical(probs)
 #			print(action_probs)
 
 			#print(sum(probs[1]))
 
-			action.clear()
-			for j in range(n_agents):
-				action.append(np.random.choice(4, p=probs[j]))
+#			action.clear()
+#			for j in range(n_agents):
+#				action.append(np.random.choice(4, p=probs[j]))
 #			print(action)
 #			print(i)
 
 #			print("--- Actions ---")
 #			print(actions)
 
-			obs_, reward, done, info = env.step(action)
+			obs_, reward, done, info = env.step(probs)
 
 #			print("--- Observation ---")
 #			print(obs_)
@@ -98,6 +100,8 @@ if __name__ == '__main__':
 
 		score_history.append(score)
 		avg_score = np.mean(score_history[-100:])
+
+#		print(avg_score)
 
 #		print("--- Avg_score ---")
 #		print(avg_score)

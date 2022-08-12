@@ -55,6 +55,9 @@ class ActorNetwork(nn.Module):
 
 		self.chkpt_file = os.path.join(chkpt_dir, name)
 
+#		print(input_dims)
+#		print()
+#		print()
 		self.fc1 = nn.Linear(input_dims, fc1_dims)
 		self.fc2 = nn.Linear(fc1_dims, fc2_dims)
 		self.pi = nn.Linear(fc2_dims, n_actions)
@@ -68,6 +71,9 @@ class ActorNetwork(nn.Module):
 		#print("--- State ---")
 		#print(state) # 10
 
+#		print(state)
+#		print()
+#		print()
 		x = F.relu(self.fc1(state))
 		x = F.relu(self.fc2(x))
 		pi = T.softmax(self.pi(x), dim=1)
